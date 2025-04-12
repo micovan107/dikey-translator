@@ -8,6 +8,99 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .feedback-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: none;
+            color: #333;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .feedback-button:hover {
+            background: #1a73e8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal input,
+        .modal textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .modal textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .modal button {
+            padding: 10px 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal button:hover {
+            background: #1557b0;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -166,15 +259,45 @@
             margin: 0;
         }
         @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
             .translation-box {
                 flex-direction: column;
+                gap: 15px;
             }
             .text-area {
-                margin-bottom: 20px;
+                margin-bottom: 15px;
+                width: 100%;
             }
             select {
                 width: 100%;
                 margin: 0 0 10px;
+                font-size: 14px;
+            }
+            textarea {
+                height: 150px;
+                font-size: 14px;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 20px;
+            }
+            .mode-selector {
+                flex-wrap: wrap;
+            }
+            .mode-btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .feedback-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 20px;
             }
         }
         textarea::placeholder {
@@ -409,6 +532,63 @@
             </div>
         </div>
     </div>
+    <button class="feedback-button" onclick="openFeedbackModal()">
+        Gửi ý kiến phản hồi
+    </button>
+
+    <div class="modal" id="feedbackModal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeFeedbackModal()">&times;</button>
+            <h2><i class="fas fa-comment-dots"></i> Gửi ý kiến phản hồi</h2>
+            <input type="email" id="feedbackEmail" placeholder="Email của bạn" required>
+            <textarea id="feedbackMessage" placeholder="Nhập ý kiến phản hồi của bạn..." required></textarea>
+            <button onclick="submitFeedback()">Gửi phản hồi</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
+    <script>
+        function openFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'block';
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById('feedbackModal').style.display = 'none';
+        }
+
+        function submitFeedback() {
+            const email = document.getElementById('feedbackEmail').value;
+            const message = document.getElementById('feedbackMessage').value;
+
+            if (!email || !message) {
+                showNotification('Vui lòng điền đầy đủ thông tin!', 'error');
+                return;
+            }
+
+            // Lưu phản hồi vào localStorage
+            const feedback = {
+                email,
+                message,
+                timestamp: new Date().getTime()
+            };
+
+            const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+            feedbacks.push(feedback);
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+
+            // Đóng modal và hiển thị thông báo
+            closeFeedbackModal();
+            document.getElementById('feedbackEmail').value = '';
+            document.getElementById('feedbackMessage').value = '';
+            showNotification('Cảm ơn bạn đã gửi phản hồi!', 'success');
+        }
+
+        // Đóng modal khi click bên ngoài
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('feedbackModal')) {
+                closeFeedbackModal();
+            }
+        }
+    </script>
 </body>
 </html>
