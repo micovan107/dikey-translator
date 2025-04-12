@@ -197,13 +197,11 @@ const debouncedTranslate = debounce(() => {
 
 // Thêm sự kiện cho việc nhập text và phím Enter
 const sourceTextArea = document.getElementById('sourceText');
-sourceTextArea.addEventListener('input', function() {
-    if (!this.value.trim()) {
-        document.getElementById('translatedText').value = '';
-    } else {
-        debouncedTranslate();
-    }
-});
+sourceTextArea.addEventListener('input', debouncedTranslate);
+
+// Thêm sự kiện cho việc thay đổi ngôn ngữ nguồn và đích
+document.getElementById('sourceLanguage').addEventListener('change', debouncedTranslate);
+document.getElementById('targetLanguage').addEventListener('change', debouncedTranslate);
 sourceTextArea.addEventListener('keypress', function(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
