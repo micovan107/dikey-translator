@@ -50,10 +50,33 @@ async function handleImageUpload(file) {
     const translatedImageText = document.getElementById('translatedImageText');
     const uploadPlaceholder = document.querySelector('.upload-placeholder');
     
-    // Hiển thị ảnh
+    // Hiển thị ảnh và nút xóa
     uploadedImage.src = URL.createObjectURL(file);
     uploadedImage.style.display = 'block';
     uploadPlaceholder.style.display = 'none';
+    
+    // Thêm nút xóa ảnh
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'x';
+    deleteButton.style.position = 'absolute';
+    deleteButton.style.top = '10px';
+    deleteButton.style.right = '10px';
+    deleteButton.style.cursor = 'pointer';
+    deleteButton.style.background = 'none';
+    deleteButton.style.border = 'none';
+    deleteButton.style.fontSize = '16px';
+    deleteButton.style.color = '#000';
+    deleteButton.onclick = function() {
+        uploadedImage.src = '';
+        uploadedImage.style.display = 'none';
+        uploadPlaceholder.style.display = 'block';
+        imageText.value = '';
+        translatedImageText.value = '';
+        deleteButton.remove();
+    };
+    const imageContainer = uploadedImage.parentElement;
+    imageContainer.style.position = 'relative';
+    imageContainer.appendChild(deleteButton);
     
     // Trích xuất văn bản từ ảnh
     imageText.value = 'Đang trích xuất văn bản từ ảnh...';
