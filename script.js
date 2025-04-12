@@ -197,7 +197,12 @@ const debouncedTranslate = debounce(() => {
 
 // Thêm sự kiện cho việc nhập text và phím Enter
 const sourceTextArea = document.getElementById('sourceText');
-sourceTextArea.addEventListener('input', debouncedTranslate);
+sourceTextArea.addEventListener('input', function() {
+    if (!this.value.trim()) {
+        document.getElementById('translatedText').value = '';
+    }
+    debouncedTranslate();
+});
 
 // Thêm sự kiện cho việc thay đổi ngôn ngữ nguồn và đích
 document.getElementById('sourceLanguage').addEventListener('change', debouncedTranslate);
